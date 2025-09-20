@@ -1,0 +1,10 @@
+{
+    "git.blame.statusBarItem.enabled": true,
+    "git.alwaysSignOff": false,
+    "git.alwaysShowStagedChangesResourceGroup": false,
+    "git.allowNoVerifyCommit": false,
+    "git.allowForcePush": false,
+    "explorer.excludeGitIgnore": false,
+    "git.closeDiffOnOperation": false,
+    "git.enabled": true
+}
