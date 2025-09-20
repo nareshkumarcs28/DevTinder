@@ -1,17 +1,28 @@
 const express = require("express");
 const app = express();
 
-// app.use("", (req,res)=>{
-//     res.send("Namaste Naresh");
-// });
 
-app.use("/test", (req,res)=>{
-    res.send("Namaste Naresh i am testing");
+
+app.get("/user", (req,res)=>{
+    res.send("im GET testing");
+});
+app.post("/user", (req,res)=>{
+    res.send("im POST testing");
 });
 
-app.use("/hello", (req,res)=>{
-    res.send("hello Naresh")
+
+app.patch("/user", (req,res)=>{
+    res.send("im PATCH testing");
 });
+
+
+app.delete("/user", (req,res)=>{
+    res.send("im DELETE testing");
+});
+
+
+
+
 
 app.listen(3000,()=>{
     console.log("running on port 3000......");
