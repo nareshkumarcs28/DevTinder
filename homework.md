@@ -1,3 +1,6 @@
+R1SKhmoXQTxQXhK2
+namastedev
+
 - Create a repository
 
 - Initialize the repository
