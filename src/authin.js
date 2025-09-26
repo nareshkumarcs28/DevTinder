@@ -10,7 +10,7 @@ app.get("/admin", adminAuth);
 app.post("/user/login", (req, res) => {
     res.send("User logged in successfully!");
 });
-
+ 
 app.get("/user/data", userAuth, (req, res) => {
     res.send("User data sent");
 });

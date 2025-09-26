@@ -14,7 +14,7 @@ const userSchema = new  mongoose.Schema({
         type: String
     },
     age: {
-        type: Number
+        type: Number 
     },
     gender: {
         type: String
@@ -23,4 +23,4 @@ const userSchema = new  mongoose.Schema({
 
 const User = mongoose.model("User",userSchema);
 
-module.exports= User;
+module.exports= User; 
