@@ -5,7 +5,7 @@ const User = require("./models/user");
 
 app.use(express.json());
 
-    // signup api
+// signup api
 app.post("/signup", async (req, res) => {
     // creating a new instance  of the user model
     const user = new User(req.body);
@@ -44,6 +44,33 @@ app.get("/feed", async (req, res) => {
         res.status(400).send("something went wrong ");
     }
 })
+
+// DELETE api 
+app.delete("/user", async (req, res) => {
+    const userId = req.body.userId; //User.find({emailId:req.body.emailId})
+    try {
+        // const user = await User.findByIdAndDelete({ _Id: userId});
+        const user = await User.findByIdAndDelete(userId);
+        res.send("User deleted successfullly!")
+
+    } catch (err) {
+        res.status(400).send("something went wrong ");
+    }
+});
+
+//update data of the user 
+app.patch("/user", async (req, res) => {
+    const userId = req.body.userId;
+    const data = req.body;
+    try {
+      const user=  await User.findByIdAndUpdate({ _id: userId }, data, { returnDocument: "after" });
+        console.log(user);
+        res.send("User updated successfullly!");
+
+    } catch (err) {
+        res.status(400).send("something went wrong ");
+    }
+});
 
 
 
