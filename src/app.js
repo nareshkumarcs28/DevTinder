@@ -4,20 +4,21 @@ const app = express();
 const User = require("./models/user");
 
 app.use(express.json());
-
-// signup api
+// sign up 
 app.post("/signup", async (req, res) => {
-    // creating a new instance  of the user model
     const user = new User(req.body);
-
     try {
         await user.save();
         res.send("User added successfully!");
     } catch (err) {
-        res.status(400).send("Error saving the user :" + err.message);
+        if (err.code === 11000) {
+            res.status(400).send("Email already exists!");
+        } else {
+            res.status(400).send("Error saving the user: " + err.message);
+        }
     }
-
 });
+
 // GET user byy email
 app.get("/user", async (req, res) => {
     const userEmail = req.body.emailId; //User.find({emailId:req.body.emailId})
@@ -33,7 +34,6 @@ app.get("/user", async (req, res) => {
         res.status(400).send("something went wrong ");
     }
 });
-
 //Feed API - GET /feed - get all the users from the database 
 app.get("/feed", async (req, res) => {
     try {
@@ -63,7 +63,7 @@ app.patch("/user", async (req, res) => {
     const userId = req.body.userId;
     const data = req.body;
     try {
-      const user=  await User.findByIdAndUpdate({ _id: userId }, data, { returnDocument: "after" });
+        const user = await User.findByIdAndUpdate({ _id: userId }, data, { returnDocument: "after" });
         console.log(user);
         res.send("User updated successfullly!");
 
@@ -71,6 +71,7 @@ app.patch("/user", async (req, res) => {
         res.status(400).send("something went wrong ");
     }
 });
+
 
 
 
