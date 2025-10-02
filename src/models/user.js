@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: true
+        required: true,
     },
     lastName: {
         type: String
@@ -11,7 +11,9 @@ const userSchema = new mongoose.Schema({
     emailId: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true
 
     },
     password: {
@@ -22,9 +24,26 @@ const userSchema = new mongoose.Schema({
         type: Number
     },
     gender: {
-        type: String
+        type: String,
+        validate(value) {
+            if (!["male", "female", "others"].includes(value)) {
+                throw new Error("gender not valid");
+            }
+        }
+    },
+    photoUrl: {
+        type: String,
+        default: "https://www.un.org/pga/73/wp-content/uploads/sites/53/2018/09/Dummy-image-1.jpg"
+    },
+    about: {
+        type: String,
+        default: "description not mentioned"
+    },
+    skills: {
+        type: [String]
     }
-});
+}, 
+{ timestamps: true });
 
 const User = mongoose.model("User", userSchema);
 
