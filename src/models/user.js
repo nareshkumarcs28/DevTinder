@@ -39,11 +39,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "description not mentioned"
     },
-    skills: {
-        type: [String]
-    }
-}, 
-{ timestamps: true });
+     skills: [{
+    type: String,
+    minlength: [3, "Skill must be at least 3 characters"],
+    maxlength: [10, "Skill cannot exceed 20 characters"]
+  }]
+},
+    { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
 
