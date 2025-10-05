@@ -2,23 +2,58 @@ const express = require("express");
 const connectDB = require("./config/database")
 const app = express();
 const User = require("./models/user");
+const bcrypt = require("bcrypt");
+const { validateSignUpData } = require("./utils/validation");
 
 app.use(express.json());
+
 // sign up 
 app.post("/signup", async (req, res) => {
-    const user = new User(req.body);
     try {
+        // Validation of data
+        validateSignUpData(req);
+
+        const { firstName, lastName, password, emailId } = req.body;
+        // Encrypt the password
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        // creating a new instance of the user model
+        const user = new User({
+            firstName,
+            lastName,
+            emailId,
+            password: passwordHash,
+
+        });
         await user.save();
         res.send("User added successfully!");
     } catch (err) {
-        if (err.code === 11000) {
-            res.status(400).send("Email already exists!");
-        } else {
-            res.status(400).send("Error saving the user: " + err.message);
-        }
+        res.status(400).send("ERROR : " + err.message);
     }
 });
 
+// login api
+app.post("/login", async (req, res) => {
+    try {
+        const { emailId, password } = req.body;
+        const user = await User.findOne({ emailId: emailId })
+        if (!user) {
+            throw new Error("Email id not valid ");
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password)
+
+        if (isPasswordValid) {
+            res.send("Login successfully!!!!!!")
+        }
+        else {
+            throw new Error("Password not valid");
+
+        }
+
+    } catch (err) {
+        res.status(400).send("Error :" + err.message)
+    }
+})
 // GET user byy email
 app.get("/user", async (req, res) => {
     const userEmail = req.body.emailId; //User.find({emailId:req.body.emailId})
@@ -68,7 +103,7 @@ app.patch("/user/:userId", async (req, res) => {
         const ALLOWED_UPDATES = ["photoUrl", "about", "gender", "age", "skills"];
         const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k));
         if (!isUpdateAllowed) {
-           throw new Error("Update not Allowed");
+            throw new Error("Update not Allowed");
         }
         const user = await User.findByIdAndUpdate({ _id: userId }, data, { returnDocument: "after", runValidators: true });
         console.log(user);
