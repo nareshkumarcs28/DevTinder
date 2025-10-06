@@ -4,9 +4,11 @@ const app = express();
 const User = require("./models/user");
 const bcrypt = require("bcrypt");
 const { validateSignUpData } = require("./utils/validation");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
-
+app.use(cookieParser())
 // sign up 
 app.post("/signup", async (req, res) => {
     try {
@@ -38,22 +40,52 @@ app.post("/login", async (req, res) => {
         const { emailId, password } = req.body;
         const user = await User.findOne({ emailId: emailId })
         if (!user) {
-            throw new Error("Email id not valid ");
+            throw new Error("invalid crediential");
         }
         const isPasswordValid = await bcrypt.compare(password, user.password)
-
         if (isPasswordValid) {
+            // create a JWT Token
+            const token = await jwt.sign({ _id: user._id }, "DEVTINDRER@47687");
+            console.log(token);
+
+            // add the token to cookie and send the response back to the user 
+
+            res.cookie("token", token)
+
             res.send("Login successfully!!!!!!")
         }
         else {
-            throw new Error("Password not valid");
-
+            throw new Error("invalid crediential");
         }
 
     } catch (err) {
         res.status(400).send("Error :" + err.message)
     }
-})
+});
+// profile api
+app.get("/profile", async (req, res) => {
+    try {
+        const cookies = req.cookies;
+        const { token } = cookies;
+        if (!token) {
+            throw new Error("Invalid Token");
+        }
+        const deocodedMessage = await jwt.verify(token, "DEVTINDRER@47687");
+        const { _id } = deocodedMessage;
+       
+        const user = await User.findById(_id)
+        if(!user){
+             throw new Error("Login Again");
+        }
+        res.send(user);
+    } catch (err) {
+        res.status(400).send("something went wrong ");
+    }
+
+});
+
+
+
 // GET user byy email
 app.get("/user", async (req, res) => {
     const userEmail = req.body.emailId; //User.find({emailId:req.body.emailId})
